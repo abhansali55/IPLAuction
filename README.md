@@ -1,1 +1,1 @@
-# A Descriptive Review of Subgraph Patterns Within an Auction Enviroment
+# A Descriptive Review of Subgraph Patterns within an Auction Enviroment
