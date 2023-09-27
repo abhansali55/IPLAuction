@@ -1,3 +1,15 @@
+//VisualizeLot
+MATCH (lot:Competition {compStructureTerm: "Auction lot"})
+WITH lot LIMIT 1
+MATCH p1 = (lot)-[:HAS_EVENT]->(bid:Event)
+OPTIONAL MATCH p2 = (lot)<-[:INVOLVED_IN]-(:Participant)-[:HAS_ROLE]->(:Role)
+OPTIONAL MATCH p6 = (lot)<-[:HAS_SUBSTRUC*1..4]-(:Competition)
+OPTIONAL MATCH p7 = (lot)<-[:INVOLVED_IN]-(:Participant)<-[:HAS_PARTICIPANT*2]-(:Athlete)
+OPTIONAL MATCH p3 = (bid)-[:FOLLOWS]->(:Event)
+OPTIONAL MATCH p4 = (bid)-[:TYPE_OF]->(:Action)
+OPTIONAL MATCH p5 = (bid)<-[:INVOLVED_IN]-(:SportSquad)<-[:HAS_SQUAD*2]-(:SportTeam)
+RETURN p1,p2,p3,p4,p5,p6
+
 //PlayerBids
 MATCH (bid:Event)-[r:TYPE_OF]->(a:Action)
 WHERE a.actID = 3 OR a.actID = 4
@@ -29,7 +41,9 @@ CALL {
 	WHERE team.termKRWebsite IS NOT NULL AND (team.termKRWebsite <> "Gujarat Titans" AND team.termKRWebsite <> "Super Giants") AND bid.seqOrder > 0
 	RETURN bid.seqOrder As eachBid, team.termKRWebsiteLong AS teamName, ROUND(COUNT(bid)/6.0,2) AS numBidsPerYear
 	ORDER BY eachBid, teamName
+								   
 	UNION ALL
+								   
 	MATCH (bid:Event)-[r:TYPE_OF]->(a:Action)
 	WHERE a.actID = 3 OR a.actID = 4
 	WITH bid
@@ -40,14 +54,3 @@ CALL {
 RETURN eachBid, teamName, numBidsPerYear
 ORDER BY eachBid, teamName
 
-//VisualizeLot
-MATCH (lot:Competition {compStructureTerm: "Auction lot"})
-WITH lot LIMIT 1
-MATCH p1 = (lot)-[:HAS_EVENT]->(bid:Event)
-OPTIONAL MATCH p2 = (lot)<-[:INVOLVED_IN]-(:Participant)-[:HAS_ROLE]->(:Role)
-OPTIONAL MATCH p6 = (lot)<-[:HAS_SUBSTRUC*1..4]-(:Competition)
-OPTIONAL MATCH p7 = (lot)<-[:INVOLVED_IN]-(:Participant)<-[:HAS_PARTICIPANT*2]-(:Athlete)
-OPTIONAL MATCH p3 = (bid)-[:FOLLOWS]->(:Event)
-OPTIONAL MATCH p4 = (bid)-[:TYPE_OF]->(:Action)
-OPTIONAL MATCH p5 = (bid)<-[:INVOLVED_IN]-(:SportSquad)<-[:HAS_SQUAD*2]-(:SportTeam)
-RETURN p1,p2,p3,p4,p5,p6
